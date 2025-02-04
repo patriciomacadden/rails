@@ -2,6 +2,13 @@
 
     *Patricio Mac Adden*
 
+*   Update `rails new --minimal` option
+
+    Extend the `--minimal` flag to exlcude recently added features:
+    `skip_brakeman`, `skip_ci`, `skip_docker`, `skip_kamal`, `skip_rubocop`, `skip_solid` and `skip_thruster`.
+
+    *eelcoj*
+
 *   Add `application-name` metadata to application layout
 
     The following metatag will be added to `app/views/layouts/application.html.erb`
@@ -20,13 +27,6 @@
     instead of generating a `tmp/local_secret.txt` file.
 
     *Petrik de Heus*
-
-*   The authentication generator's `SessionsController` sets the `Clear-Site-Data` header on logout.
-
-    By default the header will be set to `"cache","storage"` to help prevent data leakage after
-    logout via the browser's "back/forward cache".
-
-    *Mike Dalessio*
 
 *   Introduce `RAILS_MASTER_KEY` placeholder in generated ci.yml files
 

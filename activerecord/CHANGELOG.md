@@ -1,3 +1,40 @@
+*   Introduce a before-fork hook in `ActiveSupport::Testing::Parallelization` to clear existing
+    connections, to avoid fork-safety issues with the mysql2 adapter.
+
+    Fixes #41776
+
+    *Mike Dalessio*, *Donal McBreen*
+
+*   PoolConfig no longer keeps a reference to the connection class.
+
+    Keeping a reference to the class caused subtle issues when combined with reloading in
+    development. Fixes #54343.
+
+    *Mike Dalessio*
+
+*   Fix SQL notifications sometimes not sent when using async queries.
+
+    ```ruby
+    Post.async_count
+    ActiveSupport::Notifications.subscribed(->(*) { "Will never reach here" }) do
+      Post.count
+    end
+    ```
+
+    In rare circumstances and under the right race condition, Active Support notifications
+    would no longer be dispatched after using an asynchronous query.
+    This is now fixed.
+
+    *Edouard Chin*
+
+*   Eliminate queries loading dumped schema cache on Postgres
+
+    Improve resiliency by avoiding needing to open a database connection to load the
+    type map while defining attribute methods at boot when a schema cache file is
+    configured on PostgreSQL databases.
+
+    *James Coleman*
+
 *   `ActiveRecord::Coder::JSON` can be instantiated
 
     Options can now be passed to `ActiveRecord::Coder::JSON` when instantiating the coder. This allows:

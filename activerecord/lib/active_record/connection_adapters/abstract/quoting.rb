@@ -114,19 +114,6 @@ module ActiveRecord
         value
       end
 
-      # If you are having to call this function, you are likely doing something
-      # wrong. The column does not have sufficient type information if the user
-      # provided a custom type on the class level either explicitly (via
-      # Attributes::ClassMethods#attribute) or implicitly (via
-      # AttributeMethods::Serialization::ClassMethods#serialize, +time_zone_aware_attributes+).
-      # In almost all cases, the sql type should only be used to change quoting behavior, when the primitive to
-      # represent the type doesn't sufficiently reflect the differences
-      # (varchar vs binary) for example. The type used to get this primitive
-      # should have been provided before reaching the connection adapter.
-      def lookup_cast_type_from_column(column) # :nodoc:
-        lookup_cast_type(column.sql_type)
-      end
-
       # Quotes a string, escaping any ' (single quote) and \ (backslash)
       # characters.
       def quote_string(s)
@@ -159,7 +146,9 @@ module ActiveRecord
         if value.is_a?(Proc)
           value.call
         else
-          value = lookup_cast_type(column.sql_type).serialize(value)
+          # TODO: Remove fetch_cast_type and the need for connection after we release 8.1.
+          cast_type = column.fetch_cast_type(self)
+          value = cast_type.serialize(value)
           quote(value)
         end
       end
@@ -221,6 +210,11 @@ module ActiveRecord
         comment
       end
 
+      def lookup_cast_type(sql_type) # :nodoc:
+        # TODO: Make this method private after we release 8.1.
+        type_map.lookup(sql_type)
+      end
+
       private
         def type_casted_binds(binds)
           binds&.map do |value|
@@ -230,10 +224,6 @@ module ActiveRecord
               type_cast(value)
             end
           end
-        end
-
-        def lookup_cast_type(sql_type)
-          type_map.lookup(sql_type)
         end
     end
   end

@@ -482,8 +482,7 @@ This generates a `SELECT` SQL query but also adds a `WHERE` clause to filter the
 records that have a `name` matching `"Pants"`. This also returns an
 `ActiveRecord::Relation` because multiple records may have the same name.
 
-We can use `order(name: :asc)` to sort records by name in ascending alphabetical
-order by `name`.
+We can use `order(name: :asc)` to sort records by name in ascending alphabetical order.
 
 ```irb
 store(dev)> Product.order(name: :asc)
@@ -1101,7 +1100,7 @@ Let's refactor this to use these helpers:
 <div id="products">
   <% @products.each do |product| %>
     <div>
-      <%= link_to product.name, product %>
+      <%= link_to product.name, product_path(product.id) %>
     </div>
   <% end %>
 </div>
@@ -1148,7 +1147,7 @@ We can update `app/views/products/index.html.erb` to link to the new action.
 <div id="products">
   <% @products.each do |product| %>
     <div>
-      <%= link_to product.name, product %>
+      <%= link_to product.name, product_path(product.id) %>
     </div>
   <% end %>
 </div>
